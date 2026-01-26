@@ -35,7 +35,16 @@
         <div id="sharedList" class="grid gap-3">
             </div>
     </div>
-
+    <script>
+        var parms = new URLSearchParams(document.location.search);
+        if (parms.get("id") != void(0)) {
+            document.getElementById('shareId').value = parms.get("id");
+            if (parms.get("pwd") != void(0)) {
+                document.getElementById('sharePassword').value = parms.get("pwd");
+            }
+            loadSharedFiles();
+        }
+    </script>
     <script src="script.js" defer></script>
 </body>
 </html>
