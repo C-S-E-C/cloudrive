@@ -259,7 +259,7 @@ async function loadSharedFiles() {
                     <span class="font-medium text-gray-700">${fileName}</span>
                     <a href="${data.url_prefix}${fullPath}" 
                        target="_blank" 
-                       download="${filename}"
+                       download="${fileName}"
                        class="text-blue-600 font-bold text-sm hover:underline">
                        Download
                     </a>
@@ -274,6 +274,7 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
 
 
