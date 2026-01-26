@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shared Content - Cloudrive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold mb-6">Access Shared Files</h2>
+        <div id="shareAccess" class="bg-white p-6 rounded shadow mb-6">
+            <input type="text" id="shareId" placeholder="Share ID" class="w-full p-2 border rounded mb-2">
+            <input type="password" id="sharePassword" placeholder="Password" class="w-full p-2 border rounded mb-4">
+            <button onclick="loadSharedFiles()" class="w-full bg-blue-600 text-white py-2 rounded">View Files</button>
+        </div>
+        <div id="sharedList" class="space-y-2"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
