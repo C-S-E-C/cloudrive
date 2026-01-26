@@ -215,16 +215,51 @@ async function confirmShare() {
         if (data.success) {
             // Provide the user with the ID and password
             // alert(`Share Created!\nID: ${data.shareId}\nPassword: ${sharePassword}`);
-             document.getElementsByClassName('bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full')[0].innerHTML=`<h3 class="text-2xl font-bold text-gray-800">Share Link</h3>
-             <h5 class="text-2xl font-bold text-gray-800">Share Link ID</h5>
-             <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">${data.shareId}</label>
-             <h5 class="text-2xl font-bold text-gray-800">Share Link Password</h5>
-             <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">${sharePassword}</label>
-             <button onclick="await navigator.clipboard.writeText("https://cloudrive.csec.top/shared_files.html?id=${data.shareId}");" class="flex-1 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition">Copy Share Link Without Password</button>
-             <button onclick="await navigator.clipboard.writeText("https://cloudrive.csec.top/shared_files.html?id=${data.shareId}&pwd=${sharePassword}");" class="flex-1 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition">Copy Share Link With Password</button>
-             <br  />
-             <button onclick="closeShareModal()" class="flex-1 py-3 text-gray-500 font-medium hover:bg-gray-50 rounded-xl transition">Cancel</button>
-             `;
+             document.getElementsByClassName('bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full')[0].innerHTML=`
+    <div class="text-center">
+        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="C5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-6">Link Created Successfully</h3>
+        
+        <div class="space-y-4 text-left">
+            <div>
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Share ID</label>
+                <div class="flex mt-1">
+                    <input type="text" readonly value="${data.shareId}" 
+                           class="w-full bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-lg text-sm font-mono focus:outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Password</label>
+                <div class="flex mt-1">
+                    <input type="text" readonly value="${sharePassword}" 
+                           class="w-full bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-lg text-sm font-mono focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 flex flex-col gap-2">
+            <button onclick="copyToClipboard('https://cloudrive.csec.top/shared_files.html?id=${data.shareId}')" 
+                    class="w-full py-3 bg-purple-600 text-white text-sm font-bold rounded-xl hover:bg-purple-700 transition flex items-center justify-center gap-2">
+                <span>Copy Link (No Password)</span>
+            </button>
+            
+            <button onclick="copyToClipboard('https://cloudrive.csec.top/shared_files.html?id=${data.shareId}&pwd=${sharePassword}')" 
+                    class="w-full py-3 border-2 border-purple-600 text-purple-600 text-sm font-bold rounded-xl hover:bg-purple-50 transition">
+                Copy Link + Password
+            </button>
+            
+            <button onclick="closeShareModal()" 
+                    class="mt-2 py-2 text-gray-400 text-sm font-medium hover:text-gray-600 transition">
+                Close
+            </button>
+        </div>
+    </div>
+`;
         } else {
             alert("Error: " + data.error);
         }
@@ -317,12 +352,11 @@ async function loadSharedFiles() {
     }
 }
 
-
-
-
-
-
-
-
-
-
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Optional: show a small toast or change button text temporarily
+        alert("Copied to clipboard!");
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
