@@ -12,11 +12,13 @@
             <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded" required>
             <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded" required>
             <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded" required>
-            <input type="text" id="previewcode" placeholder="Preview Code (If required)" class="w-full p-2 border rounded">
+            <input style="display:none;" type="text" id="previewcode" placeholder="Preview Code" class="w-full p-2 border rounded">
             <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Register</button>
         </form>
         <p class="mt-4 text-sm text-center">Already have an account? <a href="login.html" class="text-blue-500">Login</a></p>
     </div>
     <script src="script.js"></script>
+    <script>if (await (await fetch("${API_BASE}/status")).json().status == "PREVIEW") document.getElementById('previewcode').style.display = "block"</script>
 </body>
 </html>
+
