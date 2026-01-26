@@ -156,43 +156,41 @@ async function confirmShare() {
     const sharePassword = document.getElementById('sharePass').value;
     const expiration = document.getElementById('shareExpiry').value;
     const userid = localStorage.getItem('userid');
-    const userpassword = localStorage.getItem('pass_hash'); // Verification hash
+    const userpassword = localStorage.getItem('pass_hash');
     
-    // Collect selected filenames
     const selectedCheckboxes = document.querySelectorAll('.file-checkbox:checked');
     const filesToShare = Array.from(selectedCheckboxes).map(cb => cb.value);
 
-    // Prepare URLSearchParams as expected by your backend
+    if (filesToShare.length === 0) return alert("No files selected");
+
     const params = new URLSearchParams();
     params.append('userid', userid);
     params.append('userpassword', userpassword);
     params.append('password', sharePassword);
     params.append('expiration', expiration);
-    var files = [];
-    // Your backend loops through 'files'; URLSearchParams supports multiple values for one key
-    filesToShare.forEach(file => files.push(file));
-    params.append('files',files)
+    
+    // Add each file individually so the backend can use params.getAll('files')
+    filesToShare.forEach(file => params.append('files', file));
+
     try {
         const res = await fetch(`${API_BASE}/share/create`, {
             method: 'POST',
-            body: params
+            body: params.toString(), // Explicitly send as string
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
         
-        // Your backend doesn't explicitly return a JSON body on success in the code provided,
-        // but it will trigger a 200 OK if successful.
-        if (res.ok) {
-            alert("Files shared successfully!");
+        const data = await res.json();
+        if (data.success) {
+            // Provide the user with the ID and password
+            alert(`Share Created!\nID: ${data.shareId}\nPassword: ${sharePassword}`);
             closeShareModal();
         } else {
-            const err = await res.json();
-            alert("Sharing failed: " + (err.error || "Unknown error"));
+            alert("Error: " + data.error);
         }
     } catch (e) {
-        console.error(e);
-        alert("An error occurred while sharing.");
+        alert("Server error. Check worker logs.");
     }
 }
-
 // --- Update loadFiles to include Checkboxes ---
 async function loadFiles() {
     const userid = localStorage.getItem('userid');
@@ -223,6 +221,7 @@ async function loadFiles() {
         }).join('');
     }
 }
+
 
 
 
