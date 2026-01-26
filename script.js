@@ -170,7 +170,7 @@ async function confirmShare() {
     params.append('expiration', expiration);
     var files = [];
     // Your backend loops through 'files'; URLSearchParams supports multiple values for one key
-    filesToShare.forEach(file => files.append(file));
+    filesToShare.forEach(file => files.push(file));
     parms.append('files',files)
     try {
         const res = await fetch(`${API_BASE}/share/create`, {
@@ -223,5 +223,6 @@ async function loadFiles() {
         }).join('');
     }
 }
+
 
 
