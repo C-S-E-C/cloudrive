@@ -253,6 +253,7 @@ async function loadSharedFiles() {
                 // We strip the ID for a cleaner UI
                 const fileName = fullPath.split('/').slice(1).join('/');
                 if (!fileName) return; // Skip the directory marker
+                const fileDiv = document.createElement('div');
                 fileDiv.className = "bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm";
                 fileDiv.innerHTML = `
                     <span class="font-medium text-gray-700">${fileName}</span>
@@ -273,6 +274,7 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
 
 
