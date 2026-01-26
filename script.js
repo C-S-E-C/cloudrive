@@ -15,7 +15,7 @@ async function sha512(str) {
 }
 
 async function checkstat() {
-    var status = await (await fetch("https://api.cloudrive.csec.top/status")).json()["status"];
+    const status = (await (await fetch("https://api.cloudrive.csec.top/status")).json()).status;
     if (status=="PREVIEW") {
         document.getElementById("previewcode").style.display="block";
     }
@@ -49,3 +49,4 @@ async function signup() {
     }
 
 }
+
