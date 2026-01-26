@@ -19,12 +19,21 @@
     </div>
     <script src="script.js"></script>
     <script>
+        (async function() {
+    try {
+        const response = await fetch(`${API_BASE}/status`);
+        const data = await response.json();
         
-        if (await (await fetch(`${API_BASE}/status`)).json().status == "PREVIEW"){
+        if (data.status === "PREVIEW") {
             document.getElementById('previewcode').style.display = "block";
         }
+    } catch (error) {
+        console.error('Failed to check status:', error);
+    }
+})();
     </script>
 </body>
 </html>
+
 
 
