@@ -1,4 +1,4 @@
-const API_BASE = 'https://spi.cloudrive.csec.top';
+const API_BASE = 'https://api.cloudrive.csec.top';
 
 // --- Your Custom Dual SHA-512 Hashing Logic ---
 async function sha512(str) {
@@ -223,3 +223,4 @@ async function loadFiles() {
         }).join('');
     }
 }
+
