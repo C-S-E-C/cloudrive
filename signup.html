@@ -18,7 +18,13 @@
         <p class="mt-4 text-sm text-center">Already have an account? <a href="login.html" class="text-blue-500">Login</a></p>
     </div>
     <script src="script.js"></script>
-    <script>if (await (await fetch("${API_BASE}/status")).json().status == "PREVIEW") document.getElementById('previewcode').style.display = "block"</script>
+    <script>
+        
+        if (await (await fetch(`${API_BASE}/status`)).json().status == "PREVIEW"){
+            document.getElementById('previewcode').style.display = "block";
+        }
+    </script>
 </body>
 </html>
+
 
