@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudrive | Secure Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col justify-center items-center">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold text-blue-600 mb-4">Cloudrive</h1>
+        <p class="text-gray-600 mb-8">Simple, secure, and distributed file storage.</p>
+        <div class="space-x-4">
+            <a href="login.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Login</a>
+            <a href="signup.html" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50">Sign Up</a>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        if (localStorage.getItem('userid')) window.location.href = 'dashboard.html';
+    </script>
+</body>
+</html>
