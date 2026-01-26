@@ -1,5 +1,76 @@
 const API_BASE = 'https://api.cloudrive.csec.top';
 
+const formatdict = {
+    "txt": "text/plain",
+    "json": "application/json",
+    "html": "text/html",
+    "htm": "text/html",
+    "css": "text/css",
+    "js": "application/javascript",
+    "mjs": "application/javascript",
+    "cjs": "application/javascript",
+    "jsx": "text/jsx",
+    "ts": "application/typescript",
+    "tsx": "text/tsx",
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "png": "image/png",
+    "gif": "image/gif",
+    "webp": "image/webp",
+    "svg": "image/svg+xml",
+    "ico": "image/x-icon",
+    "bmp": "image/bmp",
+    "tiff": "image/tiff",
+    "tif": "image/tiff",
+    "mp3": "audio/mpeg",
+    "wav": "audio/wav",
+    "ogg": "audio/ogg",
+    "flac": "audio/flac",
+    "aac": "audio/aac",
+    "m4a": "audio/mp4",
+    "mp4": "video/mp4",
+    "webm": "video/webm",
+    "ogv": "video/ogg",
+    "avi": "video/x-msvideo",
+    "mov": "video/quicktime",
+    "wmv": "video/x-ms-wmv",
+    "flv": "video/x-flv",
+    "mkv": "video/x-matroska",
+    "woff": "font/woff",
+    "woff2": "font/woff2",
+    "ttf": "font/ttf",
+    "otf": "font/otf",
+    "eot": "application/vnd.ms-fontobject",
+    "pdf": "application/pdf",
+    "doc": "application/msword",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "xls": "application/vnd.ms-excel",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "ppt": "application/vnd.ms-powerpoint",
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "odt": "application/vnd.oasis.opendocument.text",
+    "ods": "application/vnd.oasis.opendocument.spreadsheet",
+    "odp": "application/vnd.oasis.opendocument.presentation",
+    "rtf": "application/rtf",
+    "csv": "text/csv",
+    "xml": "application/xml",
+    "zip": "application/zip",
+    "rar": "application/x-rar-compressed",
+    "7z": "application/x-7z-compressed",
+    "tar": "application/x-tar",
+    "gz": "application/gzip",
+    "bz2": "application/x-bzip2",
+    "php": "application/x-httpd-php",
+    "asp": "application/x-asap",
+    "aspx": "application/x-asap",
+    "jsp": "application/x-jsp",
+    "wasm": "application/wasm",
+    "swf": "application/x-shockwave-flash",
+    "exe": "application/x-msdownload",
+    "dmg": "application/x-apple-diskimage",
+    "iso": "application/x-iso9660-image",
+    "bin": "application/octet-stream",
+};
 // --- Your Custom Dual SHA-512 Hashing Logic ---
 async function sha512(str) {
     const encoder = new TextEncoder();
@@ -253,13 +324,18 @@ async function loadSharedFiles() {
                 // We strip the ID for a cleaner UI
                 const fileName = fullPath.split('/').slice(1).join('/');
                 if (!fileName) return; // Skip the directory marker
-
+                const content = await (await fetch("${data.url_prefix}${fullPath}")).text();
+                const extension = filename.split('.').pop().toLowerCase();
+                const type = formatdict[extension] || 'application/octet-stream';
+                const blob = new Blob([content], { type: type });
+                const blobUrl = URL.createObjectURL(blob);
                 const fileDiv = document.createElement('div');
                 fileDiv.className = "bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm";
                 fileDiv.innerHTML = `
                     <span class="font-medium text-gray-700">${fileName}</span>
-                    <a href="${data.url_prefix}${fullPath}" 
+                    <a href="${blobUrl}" 
                        target="_blank" 
+                       download="${filename}"
                        class="text-blue-600 font-bold text-sm hover:underline">
                        Download
                     </a>
@@ -274,3 +350,4 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
