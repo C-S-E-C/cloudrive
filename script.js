@@ -14,12 +14,25 @@ async function sha512(str) {
     return hashHex;
 }
 
+async function checkstat() {
+    var status = await (await fetch("https://api.cloudrive.csec.top/status")).json()["status"];
+    if (status=="PREVIEW") {
+        document.getElementById("previewcode").style.display="block";
+    }
+}
+
 async function signup() {
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
-    password = await sha512(password)+await sha512(password.split("").reverse().join(""));
-    var data = new URLSearchParams({email: email, username: username, password: password});
+    var previewcode = document.getElementById("previewcode").value||null;
+    var status = await (await fetch("https://api.cloudrive.csec.top/status")).json()["status"];
+    var password = await sha512(password)+await sha512(password.split("").reverse().join(""));
+    var datajson = {email: email, username: username, password: password}
+    if (status = "PREVIEW") {
+        datajson["previewcode"] = previewcode;
+    }
+    var data = new URLSearchParams(datajson);
     let response = await fetch('https://api.cloudrive.csec.top/register', {
         method: 'POST',
         headers: {
@@ -34,4 +47,5 @@ async function signup() {
         alert("Account created successfully!");
         window.location.href = "login.html";
     }
+
 }
