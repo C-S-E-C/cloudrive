@@ -153,7 +153,7 @@ function closeShareModal() {
 }
 
 async function confirmShare() {
-    const sharePassword = document.getElementById('sharePass').value;
+    const sharePassword = document.getElementById('sharePass').value || null;
     const expiration = document.getElementById('shareExpiry').value;
     const userid = localStorage.getItem('userid');
     const userpassword = localStorage.getItem('pass_hash');
@@ -183,7 +183,16 @@ async function confirmShare() {
         if (data.success) {
             // Provide the user with the ID and password
             alert(`Share Created!\nID: ${data.shareId}\nPassword: ${sharePassword}`);
-            closeShareModal();
+             document.getElementById('shareModal').innerHTML=`<h3 class="text-2xl font-bold text-gray-800">Share Link</h3>
+             <h5 class="text-2xl font-bold text-gray-800">Share Link ID</h5>
+             <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">${data.shareId}</label>
+             <h5 class="text-2xl font-bold text-gray-800">Share Link Password</h5>
+             <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">${sharePassword}</label>
+             <button onclick="await navigator.clipboard.writeText("https://cloudrive.csec.top/shared_files.html?id=${data.shareId}");" class="flex-1 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition">Copy Share Link Without Password</button>
+             <button onclick="await navigator.clipboard.writeText("https://cloudrive.csec.top/shared_files.html?id=${data.shareId}&pwd=${sharePassword}");" class="flex-1 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition">Copy Share Link With Password</button>
+             <br  />
+             <button onclick="closeShareModal()" class="flex-1 py-3 text-gray-500 font-medium hover:bg-gray-50 rounded-xl transition">Cancel</button>
+             `;
         } else {
             alert("Error: " + data.error);
         }
@@ -274,6 +283,7 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
 
 
