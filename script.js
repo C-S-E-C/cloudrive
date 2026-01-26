@@ -214,8 +214,8 @@ async function confirmShare() {
         const data = await res.json();
         if (data.success) {
             // Provide the user with the ID and password
-            alert(`Share Created!\nID: ${data.shareId}\nPassword: ${sharePassword}`);
-             document.getElementByClassName('bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full').innerHTML=`<h3 class="text-2xl font-bold text-gray-800">Share Link</h3>
+            // alert(`Share Created!\nID: ${data.shareId}\nPassword: ${sharePassword}`);
+             document.getElementsByClassName('bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full')[0].innerHTML=`<h3 class="text-2xl font-bold text-gray-800">Share Link</h3>
              <h5 class="text-2xl font-bold text-gray-800">Share Link ID</h5>
              <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">${data.shareId}</label>
              <h5 class="text-2xl font-bold text-gray-800">Share Link Password</h5>
@@ -316,6 +316,7 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
 
 
