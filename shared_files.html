@@ -42,7 +42,7 @@
             if (parms.get("pwd") != void(0)) {
                 document.getElementById('sharePassword').value = parms.get("pwd");
             }
-            loadSharedFiles();
+            document.addEventListener('DOMContentLoaded', function() {loadSharedFiles();});
         }
     </script>
     <script src="script.js" defer></script>
