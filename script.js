@@ -150,6 +150,38 @@ function openShareModal() {
 
 function closeShareModal() {
     document.getElementById('shareModal').classList.add('hidden');
+    document.getElementById('shareModal').innerHTML=`<div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Create Share Link</h3>
+                <p class="text-gray-500 text-sm mt-1">Configure security for selected files</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Passphrase (Required)</label>
+                    <input type="password" id="sharePass" placeholder="Enter a password" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Expires After</label>
+                    <select id="shareExpiry" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none bg-white">
+                        <option value="3600">1 Hour</option>
+                        <option value="86400" selected="">24 Hours</option>
+                        <option value="604800">7 Days</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="closeShareModal()" class="flex-1 py-3 text-gray-500 font-medium hover:bg-gray-50 rounded-xl transition">Cancel</button>
+                <button onclick="confirmShare()" class="flex-1 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition">Generate Link</button>
+            </div>
+        </div>
+    `
 }
 
 async function confirmShare() {
@@ -183,7 +215,7 @@ async function confirmShare() {
         if (data.success) {
             // Provide the user with the ID and password
             alert(`Share Created!\nID: ${data.shareId}\nPassword: ${sharePassword}`);
-             document.getElementById('shareModal').innerHTML=`<h3 class="text-2xl font-bold text-gray-800">Share Link</h3>
+             document.getElementByClass('bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full').innerHTML=`<h3 class="text-2xl font-bold text-gray-800">Share Link</h3>
              <h5 class="text-2xl font-bold text-gray-800">Share Link ID</h5>
              <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">${data.shareId}</label>
              <h5 class="text-2xl font-bold text-gray-800">Share Link Password</h5>
@@ -283,6 +315,7 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
 
 
