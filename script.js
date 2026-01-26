@@ -230,6 +230,7 @@ async function confirmShare() {
         }
     } catch (e) {
         alert("Server error. Check worker logs.");
+        console.error(e);
     }
 }
 // --- Update loadFiles to include Checkboxes ---
@@ -315,6 +316,7 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
 
 
