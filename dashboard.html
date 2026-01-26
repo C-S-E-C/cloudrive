@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Cloudrive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">My Cloudrive</h1>
+        <div>
+            <span id="userNameDisplay" class="mr-4 text-gray-600"></span>
+            <button onclick="logout()" class="text-red-500 text-sm">Logout</button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto mt-10 p-4">
+        <div class="flex gap-4 mb-6">
+            <input type="text" id="newFileName" placeholder="filename.txt" class="flex-1 p-2 border rounded">
+            <button onclick="createFile()" class="bg-blue-600 text-white px-4 py-2 rounded">New File</button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 border-b">
+                    <tr>
+                        <th class="p-4">File Name</th>
+                        <th class="p-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="fileList">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
