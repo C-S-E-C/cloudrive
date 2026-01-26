@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="login.css">
-    <script src="script.js"></script>
+    <meta charset="UTF-8">
+    <title>Login - Cloudrive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div id="loginforum">
-        <h1>Login</h1>
-        <br  />
-        <input type="text" id="username" placeholder="USERNAME">
-        <br  />
-        <input type="password" id="password" placeholder="PASSWORD">
-        <br  />
-        <button onclick="login_button()">Login</button>
-        <br  />
-        <h5 id="loginstatus" style="color: red;"></h5>
+<body class="bg-gray-50 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-md w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+        <form id="loginForm" class="space-y-4">
+            <input type="text" id="identifier" placeholder="Email or Username" class="w-full p-2 border rounded" required>
+            <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded" required>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enter Drive</button>
+        </form>
+        <p class="mt-4 text-sm text-center">New here? <a href="signup.html" class="text-blue-500">Sign up</a></p>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
