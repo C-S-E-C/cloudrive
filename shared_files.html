@@ -2,19 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shared Content - Cloudrive</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 p-8">
+<body class="bg-gray-50 min-h-screen p-4 md:p-8">
     <div class="max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6">Access Shared Files</h2>
-        <div id="shareAccess" class="bg-white p-6 rounded shadow mb-6">
-            <input type="text" id="shareId" placeholder="Share ID" class="w-full p-2 border rounded mb-2">
-            <input type="password" id="sharePassword" placeholder="Password" class="w-full p-2 border rounded mb-4">
-            <button onclick="loadSharedFiles()" class="w-full bg-blue-600 text-white py-2 rounded">View Files</button>
+        <div class="flex items-center gap-4 mb-8">
+            <a href="dashboard.html" class="text-gray-400 hover:text-gray-600">&larr; Back</a>
+            <h2 class="text-3xl font-bold text-gray-800">Shared Portal</h2>
         </div>
-        <div id="sharedList" class="space-y-2"></div>
+
+        <div id="shareAccess" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Share ID</label>
+                    <input type="text" id="shareId" placeholder="Enter ID" 
+                           class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Access Password</label>
+                    <input type="password" id="sharePassword" placeholder="Enter Password" 
+                           class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <button onclick="loadSharedFiles()" 
+                        class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                    Unlock Files
+                </button>
+            </div>
+        </div>
+
+        <div id="sharedList" class="grid gap-3">
+            </div>
     </div>
-    <script src="script.js"></script>
+
+    <script src="script.js" defer></script>
 </body>
 </html>
