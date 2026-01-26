@@ -1,30 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Signup</title>
-    <link rel="stylesheet" type="text/css" href="signup.css">
-    <script src="script.js"></script>
+    <meta charset="UTF-8">
+    <title>Sign Up - Cloudrive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div id="loginforum">
-        <h1>Signup</h1>
-        <br  />
-        <input type="text" id="username" placeholder="USERNAME">
-        <br  />
-        <input type="text" id="email" placeholder="EMAIL">
-        <br  />
-        <input type="password" id="password" placeholder="PASSWORD">
-        <br  />
-        <input style="display:none;" type="text" id="previewcode" placeholder="PREVIEWCODE">
-        <br  />
-        <button onclick="signup()">Signup</button>
-        <br  />
-        <h5 id="loginstatus" style="color: red;"></h5>
+<body class="bg-gray-50 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-md w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center">Create Account</h2>
+        <form id="signupForm" class="space-y-4">
+            <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded" required>
+            <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded" required>
+            <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded" required>
+            <input type="text" id="previewcode" placeholder="Preview Code (If required)" class="w-full p-2 border rounded">
+            <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Register</button>
+        </form>
+        <p class="mt-4 text-sm text-center">Already have an account? <a href="login.html" class="text-blue-500">Login</a></p>
     </div>
-    <script>checkstat();</script>
+    <script src="script.js"></script>
 </body>
-
 </html>
-
-
-
