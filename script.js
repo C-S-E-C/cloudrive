@@ -324,7 +324,7 @@ async function loadSharedFiles() {
                 // We strip the ID for a cleaner UI
                 const fileName = fullPath.split('/').slice(1).join('/');
                 if (!fileName) return; // Skip the directory marker
-                const content = await (await fetch("${data.url_prefix}${fullPath}")).text();
+                const content = await (await fetch(`${data.url_prefix}${fullPath}`)).text();
                 const extension = filename.split('.').pop().toLowerCase();
                 const type = formatdict[extension] || 'application/octet-stream';
                 const blob = new Blob([content], { type: type });
@@ -350,4 +350,5 @@ async function loadSharedFiles() {
         alert("Failed to connect to the server.");
     }
 }
+
 
