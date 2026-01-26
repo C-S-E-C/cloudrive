@@ -222,7 +222,55 @@ async function loadFiles() {
     }
 }
 
+// Add this to your script.js if not already present
+async function loadSharedFiles() {
+    const id = document.getElementById('shareId').value;
+    const password = document.getElementById('sharePassword').value;
+    const listContainer = document.getElementById('sharedList');
 
+    if (!id) return alert("Please enter a Share ID");
 
+    try {
+        const params = new URLSearchParams({ id, password });
+        const res = await fetch(`${API_BASE}/share/list`, { 
+            method: 'POST', 
+            body: params.toString() 
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            // Hide the access form or just clear the list
+            listContainer.innerHTML = '';
+            
+            if (data.data.length === 0) {
+                listContainer.innerHTML = '<p class="text-center text-gray-400">This share is empty.</p>';
+                return;
+            }
 
+            data.data.forEach(fullPath => {
+                // The backend returns full paths (e.g., "shareid/filename.txt")
+                // We strip the ID for a cleaner UI
+                const fileName = fullPath.split('/').slice(1).join('/');
+                if (!fileName) return; // Skip the directory marker
 
+                const fileDiv = document.createElement('div');
+                fileDiv.className = "bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm";
+                fileDiv.innerHTML = `
+                    <span class="font-medium text-gray-700">${fileName}</span>
+                    <a href="${data.url_prefix}${fullPath}" 
+                       target="_blank" 
+                       class="text-blue-600 font-bold text-sm hover:underline">
+                       Download
+                    </a>
+                `;
+                listContainer.appendChild(fileDiv);
+            });
+        } else {
+            alert("Access Denied: " + data.error);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Failed to connect to the server.");
+    }
+}
