@@ -77,8 +77,8 @@ async function loadFiles() {
     if (!userid) return;
 
     const params = new URLSearchParams({ userid, password, path: "" });
-    const res = await fetch(`${API_BASE}/action/list`, { method: 'POST', body: params });
-    const result = await res.json();
+    var res = await fetch(`${API_BASE}/action/list`, { method: 'POST', body: params });
+    var result = await res.json();
 
     const container = document.getElementById('fileList');
     if (result.success && result.data) {
@@ -95,6 +95,9 @@ async function loadFiles() {
             `;
         }).join('');
     }
+    var res = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
+    var result = await res.json();
+    
 }
 
 async function createFile(filename, content) {
@@ -470,4 +473,5 @@ async function createFileWindow(filename = "") {
     pipDoc.getElementById("cancelBtn").onclick = () => {
         PiP.close();
     };
+
 }
