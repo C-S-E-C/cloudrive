@@ -431,7 +431,8 @@ function copyToClipboard(text) {
 
 function createFileWindow(filename=""){
     const PiP = window.documentPictureInPicture.requestWindow({width:500,height:300});
-    PiP.innerHTML = `<div id="top" style="display: inline-flex; top:1%; left:1%; position: absolute; width: 98%; height: 5%;">
+    const pipDoc = pipWindow.document;
+    pipDoc.body.innerHTML = `<div id="top" style="display: inline-flex; top:1%; left:1%; position: absolute; width: 98%; height: 5%;">
     <input type="text" id="filename" style="width: 85%;" placeholder="file.txt"  />
     <p style="line-height: 90%;width: 2.5%;">&nbsp;&nbsp;</p>
     <button id="saveBtn" style="width: 5%;" onclick="pipsave()">Save</button>
@@ -449,5 +450,5 @@ function createFileWindow(filename=""){
         document.close();
     }
 </script>`;
-    PiP.getElementById("filename").value = filename;
+    pipDoc.getElementById("filename").value = filename;
 }
