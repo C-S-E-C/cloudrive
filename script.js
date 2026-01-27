@@ -370,22 +370,22 @@ async function loadFiles() {
     }
     res = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
     result = await res.json();
-    document.getElementById("MaxSizeDisplay").innerHTML = `/${result.data.max}Gb`
+    document.getElementById("MaxSizeDisplay").innerHTML = `&nbsp;&nbsp;/${result.data.max}Gb`
     if (result.data.used >= 1024*1024*1024*1024) {
         //tb
-        document.getElementById("MaxSizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024*1024)).toFixed(2)}Tb`
+        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024*1024)).toFixed(2)}Tb`
     } else if (result.data.used >= 1024*1024*1024) {
         //gb
-        document.getElementById("MaxSizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024)).toFixed(2)}Gb`
+        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024)).toFixed(2)}Gb`
     } else if (result.data.used >= 1024*1024) {
         //mb
-        document.getElementById("MaxSizeDisplay").innerHTML = `${(result.data.used/(1024*1024)).toFixed(2)}Mb`
+        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024)).toFixed(2)}Mb`
     } else if (result.data.used >= 1024) {
         //Kb
-        document.getElementById("MaxSizeDisplay").innerHTML = `${(result.data.used/1024).toFixed(2)}Kb`
+        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/1024).toFixed(2)}Kb`
     } else if (result.data.used > 0) {
         //B
-        document.getElementById("MaxSizeDisplay").innerHTML = `${(result.data.used).toFixed(2)}B`
+        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used).toFixed(2)}B`
     }
 }
 
