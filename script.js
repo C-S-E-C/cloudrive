@@ -97,62 +97,96 @@ async function loadFiles() {
     }
 }
 
-async function createFile(filename,content) {
+async function createFile(filename, content) {
     const name = filename;
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
     
     if (!name) return alert("Enter a filename");
-    const PiP = window.documentPictureInPicture.requestWindow({width:500,height:300});
-    PiP.innerHTML = await (await fetch("send_animation.html")).text()
-    statusbar = PiP.document.getElementById("status");
-    const circle = PiP.getElementById("computer_circle");
-    const servCircle = PiP.getElementById("server_circle");
-    statusbar.innerText = "Analyizing data...";
+
+    // 1. Open the PiP Window
+    const pipWindow = await window.documentPictureInPicture.requestWindow({ width: 500, height: 300 });
+    const pipDoc = pipWindow.document;
+
+    // 2. Load the animation HTML into the PiP document
+    const animationHtml = await (await fetch("send_animation.html")).text();
+    pipDoc.body.innerHTML = animationHtml;
+
+    // 3. Select elements FROM the PiP document
+    const statusbar = pipDoc.getElementById("status");
+    const circle = pipDoc.getElementById("computer_circle");
+    const servCircle = pipDoc.getElementById("server_circle");
+    
+    // UI Elements for final transition
+    const compWrap = pipDoc.getElementById("computer_wrapper");
+    const servWrap = pipDoc.getElementById("server_wrapper");
+    const serverIcon = pipDoc.querySelector('.server-icon');
+    const check = pipDoc.getElementById("checkmark");
+
+    statusbar.innerText = "Analyzing data...";
+
     const params = new URLSearchParams({ 
         userid, 
         password, 
         path: name, 
         content: content 
     });
+
+    // 4. Start Upload UI
     statusbar.innerText = "Data Uploading...";
     circle.style.borderBottomColor = "#078b07";
     circle.style.animation = "bigger 3s forwards";
+
+    // Start request and animation delay in parallel
     const fetchevent = fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    const animationDelay = new Promise(resolve => setTimeout(resolve, 3000));
+
+    await animationDelay;
+
+    // Update Server Circle animation
     servCircle.style.borderColor = "#078b07";
     servCircle.style.borderBottomColor = "transparent";
     servCircle.style.animation = "rotate 2.5s linear infinite";
-    const res = await fetchevent;
-    const data = await res.json();
-    if (data.success) {
-         const compWrap = document.getElementById("computer_wrapper");
-        const servWrap = document.getElementById("server_wrapper");
-        const servCircle = document.getElementById("server_circle");
-        const server = document.getElementById("server");
-        const serverIcon = server.querySelector('.server-icon'); // 获取服务器图标
-        const check = document.getElementById("checkmark");
-         // 1. 移动与淡出
-        compWrap.className = "container fade-out";
-        servWrap.className = "container center-and-scale";
-        // 2. 变换 Server 状态
-        servCircle.style.animation = "none";
-        servCircle.style.borderBottomColor = "#078b07"; // 变成全圆
-        servCircle.style.borderColor = "#078b07"; // 确保完整显示
-        // 替换 SVG 图标为对勾状态 (可选，这里简化为直接显示对勾)
-        // 如果想要替换SVG，需要修改DOM，这里我们直接显示CSS对勾。
-        serverIcon.style.opacity = '0'; // 淡出服务器图标
-        serverIcon.style.transition = 'opacity 0.5s';
-        // 显示对勾
-        check.style.animation = "showCheck 0.5s forwards 0.5s";
-        check.style.borderColor = "#078b07"; // 让对勾颜色与成功颜色一致
-        statusbar.innerText = "Success!";
-        document.getElementById('newFileName').value = '';
-        loadFiles();
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        PiP.close();
-    } else {
-        alert('Upload failed');
+
+    try {
+        const res = await fetchevent;
+        const data = await res.json();
+
+        if (data.success) {
+            // 5. Success State Transitions
+            compWrap.className = "container fade-out";
+            servWrap.className = "container center-and-scale";
+
+            servCircle.style.animation = "none";
+            servCircle.style.borderBottomColor = "#078b07"; 
+            servCircle.style.borderColor = "#078b07"; 
+
+            if (serverIcon) {
+                serverIcon.style.opacity = '0';
+                serverIcon.style.transition = 'opacity 0.5s';
+            }
+
+            check.style.animation = "showCheck 0.5s forwards 0.5s";
+            check.style.borderColor = "#078b07"; 
+            
+            statusbar.innerText = "Success!";
+            
+            // Cleanup main UI
+            const inputField = document.getElementById('newFileName');
+            if (inputField) inputField.value = '';
+            loadFiles();
+
+            // Wait before closing
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            pipWindow.close();
+        } else {
+            statusbar.innerText = "Error!";
+            alert('Upload failed: ' + data.error);
+            pipWindow.close();
+        }
+    } catch (err) {
+        console.error(err);
+        pipWindow.close();
     }
 }
 
