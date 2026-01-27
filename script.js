@@ -138,11 +138,10 @@ async function createFile(filename, content) {
     circle.style.animation = "bigger 3s forwards";
 
     // Start request and animation delay in parallel
-    const fetchevent = fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
     const animationDelay = new Promise(resolve => setTimeout(resolve, 3000));
 
     await animationDelay;
-
+    const fetchevent = fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
     // Update Server Circle animation
     servCircle.style.borderColor = "#078b07";
     servCircle.style.borderBottomColor = "transparent";
