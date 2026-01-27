@@ -30,7 +30,7 @@
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Quick Create</h3>
                 <div class="flex gap-2">
-                    <input type="text" id="newFileName" placeholder="notes.txt" 
+                    <input type="text" id="newFileName" placeholder="notes.txt" autocomplete="off"
                            class="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button onclick="createFileWindow(document.getElementById('newFileName').value)" 
                             class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Create File</button>
@@ -97,8 +97,8 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Passphrase (Required)</label>
-                    <input type="password" id="sharePass" placeholder="Enter a password" 
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Passphrase</label>
+                    <input type="password" id="sharePass" placeholder="Enter a password" autocomplete="off"
                            class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
                 </div>
                 <div>
