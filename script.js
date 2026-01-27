@@ -104,6 +104,7 @@ async function createFile(filename,content) {
     
     if (!name) return alert("Enter a filename");
     const PiP = window.documentPictureInPicture.requestWindow({width:500,height:300});
+    PiP.innerHTML = await (await fetch("send_animation.html")).text()
     statusbar = PiP.getElementById("status");
     const circle = PiP.getElementById("computer_circle");
     const servCircle = PiP.getElementById("server_circle");
