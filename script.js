@@ -138,7 +138,7 @@ async function createFile(filename, content) {
     circle.style.animation = "bigger 3s forwards";
 
     // Start request and animation delay in parallel
-    const animationDelay = new Promise(resolve => setTimeout(resolve, 500));
+    const animationDelay = new Promise(resolve => setTimeout(resolve, 250));
 
     await animationDelay;
     const fetchevent = fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
