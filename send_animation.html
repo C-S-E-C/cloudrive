@@ -1,0 +1,189 @@
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* 确保 body 占满视口高度 */
+            margin: 0;
+            overflow: hidden; /* 防止放大时出现滚动条 */
+            background-color: #f0f0f0; /* 给个浅色背景方便看效果 */
+        }
+
+        .container {
+            position: absolute;
+            top: 50%;
+            width: 120px;
+            height: 120px;
+            transform: translateY(-50%); /* 垂直居中修正 */
+            transition: all 1s ease-in-out; /* 让移动更平滑 */
+        }
+
+        #computer_wrapper { left: 25%; }
+        #server_wrapper { left: 75%; }
+
+        /* SVG 容器，移除了背景色 */
+        #computer, #server {
+            position: absolute;
+            top: 15px; left: 15px;
+            width: 90px; height: 90px;
+            border-radius: 50%; /* 保持圆形形状，但无背景色 */
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease-out; /* 添加淡出过渡 */
+        }
+
+        /* 内部 SVG 样式 */
+        #computer svg, #server svg {
+            width: 70%; /* 让 SVG 适当缩小，防止撑满 */
+            height: 70%;
+            fill: #555; /* 默认图标颜色 */
+        }
+
+        /* 动画外圈 */
+        #computer_circle {
+            position: absolute;
+            width: 120px; height: 120px;
+            border: 10px solid #078b07;
+            border-radius: 50%;
+            border-bottom-color: transparent;
+            box-sizing: border-box;
+            animation: rotate 2.5s linear infinite;
+        }
+
+        #server_circle {
+            position: absolute;
+            width: 120px; height: 120px;
+            border: 10px solid transparent;
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+
+        /* 对勾样式 */
+        #checkmark {
+            width: 30px;
+            height: 50px;
+            border: solid white; /* 对勾颜色 */
+            border-width: 0 8px 8px 0;
+            transform: rotate(45deg);
+            opacity: 0;
+            margin-top: -5px;
+            position: absolute; /* 让对勾独立定位 */
+            z-index: 3;
+        }
+
+        /* 动画定义 */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bigger {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(25); opacity: 0; }
+        }
+
+        /* 对勾出现动画 */
+        @keyframes showCheck {
+            to { opacity: 1; }
+        }
+
+        /* 移动到中央并放大 1.5 倍的最终态 */
+        .center-and-scale {
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(1.5) !important;
+        }
+
+        /* computer 淡出并向中央移动 */
+        .fade-out {
+            left: 0 !important;
+            transform: translate(-50%, -50%) !important;
+            opacity: 0;
+        }
+
+        #status {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            color: #333;
+        }
+    </style>
+    <h1 id="status"></h1>
+    <div id="computer_wrapper" class="container">
+        <div id="computer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="15" rx="2" ry="2"></rect>
+                <line x1="1" y1="18" x2="23" y2="18"></line>
+                <line x1="7" y1="21" x2="17" y2="21"></line>
+            </svg>
+        </div>
+        <div id="computer_circle"></div>
+    </div>
+
+    <div id="server_wrapper" class="container">
+        <div id="server">
+            <svg class="server-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 20h4a2 2 0 0 0 2-2v-4H8v4a2 2 0 0 0 2 2z"></path>
+                <path d="M6 16h12V4H6v12z"></path>
+                <path d="M10 9h4"></path>
+                <path d="M10 13h4"></path>
+            </svg>
+            <div id="checkmark"></div>
+        </div>
+        <div id="server_circle"></div>
+    </div>
+
+    <script>
+        statusbar = document.getElementById("status");
+        statusbar.innerText = "Analyizing data...";
+        function frame2() {
+            statusbar.innerText = "Data Uploading...";
+            const circle = document.getElementById("computer_circle");
+            circle.style.borderBottomColor = "#078b07";
+            circle.style.animation = "bigger 3s forwards";
+            
+            setTimeout(frame3, 1200);
+        }
+
+        function frame3() {
+            statusbar.innerText = "Server saving data...";
+            const servCircle = document.getElementById("server_circle");
+            servCircle.style.borderColor = "#078b07";
+            servCircle.style.borderBottomColor = "transparent";
+            servCircle.style.animation = "rotate 2.5s linear infinite";
+            
+        }
+
+        function frame4() {
+            const compWrap = document.getElementById("computer_wrapper");
+            const servWrap = document.getElementById("server_wrapper");
+            const servCircle = document.getElementById("server_circle");
+            const server = document.getElementById("server");
+            const serverIcon = server.querySelector('.server-icon'); // 获取服务器图标
+            const check = document.getElementById("checkmark");
+
+            // 1. 移动与淡出
+            compWrap.className = "container fade-out";
+            servWrap.className = "container center-and-scale";
+
+            // 2. 变换 Server 状态
+            servCircle.style.animation = "none";
+            servCircle.style.borderBottomColor = "#078b07"; // 变成全圆
+            servCircle.style.borderColor = "#078b07"; // 确保完整显示
+
+            // 替换 SVG 图标为对勾状态 (可选，这里简化为直接显示对勾)
+            // 如果想要替换SVG，需要修改DOM，这里我们直接显示CSS对勾。
+            serverIcon.style.opacity = '0'; // 淡出服务器图标
+            serverIcon.style.transition = 'opacity 0.5s';
+
+
+            // 显示对勾
+            check.style.animation = "showCheck 0.5s forwards 0.5s";
+            check.style.borderColor = "#078b07"; // 让对勾颜色与成功颜色一致
+            statusbar.innerText = "Success!";
+        }
+    </script>

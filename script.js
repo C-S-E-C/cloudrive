@@ -97,25 +97,59 @@ async function loadFiles() {
     }
 }
 
-async function createFile() {
-    const name = document.getElementById('newFileName').value;
+async function createFile(filename,content) {
+    const name = filename;
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
     
     if (!name) return alert("Enter a filename");
-
+    const PiP = window.documentPictureInPicture.requestWindow({width:500,height:300});
+    statusbar = PiP.getElementById("status");
+    const circle = PiP.getElementById("computer_circle");
+    const servCircle = PiP.getElementById("server_circle");
+    statusbar.innerText = "Analyizing data...";
     const params = new URLSearchParams({ 
         userid, 
         password, 
         path: name, 
-        content: "Hello from Cloudrive!" 
+        content: content 
     });
-    
-    const res = await fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
+    statusbar.innerText = "Data Uploading...";
+    circle.style.borderBottomColor = "#078b07";
+    circle.style.animation = "bigger 3s forwards";
+    const fetchevent = fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    servCircle.style.borderColor = "#078b07";
+    servCircle.style.borderBottomColor = "transparent";
+    servCircle.style.animation = "rotate 2.5s linear infinite";
+    const res = await fetchevent;
     const data = await res.json();
     if (data.success) {
+         const compWrap = document.getElementById("computer_wrapper");
+        const servWrap = document.getElementById("server_wrapper");
+        const servCircle = document.getElementById("server_circle");
+        const server = document.getElementById("server");
+        const serverIcon = server.querySelector('.server-icon'); // 获取服务器图标
+        const check = document.getElementById("checkmark");
+         // 1. 移动与淡出
+        compWrap.className = "container fade-out";
+        servWrap.className = "container center-and-scale";
+        // 2. 变换 Server 状态
+        servCircle.style.animation = "none";
+        servCircle.style.borderBottomColor = "#078b07"; // 变成全圆
+        servCircle.style.borderColor = "#078b07"; // 确保完整显示
+        // 替换 SVG 图标为对勾状态 (可选，这里简化为直接显示对勾)
+        // 如果想要替换SVG，需要修改DOM，这里我们直接显示CSS对勾。
+        serverIcon.style.opacity = '0'; // 淡出服务器图标
+        serverIcon.style.transition = 'opacity 0.5s';
+        // 显示对勾
+        check.style.animation = "showCheck 0.5s forwards 0.5s";
+        check.style.borderColor = "#078b07"; // 让对勾颜色与成功颜色一致
+        statusbar.innerText = "Success!";
         document.getElementById('newFileName').value = '';
         loadFiles();
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        PiP.close();
     } else {
         alert('Upload failed');
     }
@@ -360,3 +394,4 @@ function copyToClipboard(text) {
         console.error('Failed to copy: ', err);
     });
 }
+
