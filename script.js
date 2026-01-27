@@ -429,26 +429,45 @@ function copyToClipboard(text) {
     });
 }
 
-function createFileWindow(filename=""){
-    const PiP = window.documentPictureInPicture.requestWindow({width:500,height:300});
+async function createFileWindow(filename = "") {
+    // 1. Await the window request
+    const PiP = await window.documentPictureInPicture.requestWindow({ width: 500, height: 300 });
     const pipDoc = PiP.document;
-    pipDoc.body.innerHTML = `<div id="top" style="display: inline-flex; top:1%; left:1%; position: absolute; width: 98%; height: 5%;">
-    <input type="text" id="filename" style="width: 85%;" placeholder="file.txt"  />
-    <p style="line-height: 90%;width: 2.5%;">&nbsp;&nbsp;</p>
-    <button id="saveBtn" style="width: 5%;" onclick="pipsave()">Save</button>
-    <p style="line-height: 90%;width: 2.5%;">&nbsp;&nbsp;</p>
-    <button id="cancelBtn" style="width: 5%;" onclick="document.close()">Cancel</button>
-</div>
-<div id="editor" style="top:7%; left:1%; position: absolute; width: 98%; height: 89%; display: flex;">
-    <textarea id="text" style="width: 100%; height: 100%;"></textarea>
-</div>
-<script>
-    function pipsave(){
-        var filename = document.getElementById("filename").value;
-        var text = document.getElementById("text").value;
-        createFile(filename, text);
-        document.close();
-    }
-</script>`;
+
+    // 2. Inject HTML (Remove the <script> tag from the string)
+    pipDoc.body.innerHTML = `
+        <div id="top" style="display: flex; gap: 10px; padding: 10px; height: 40px; background: #eee;">
+            <input type="text" id="filename" style="flex: 1; border: 1px solid #ccc; border-radius: 4px;" placeholder="file.txt" />
+            <button id="saveBtn" style="padding: 0 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+            <button id="cancelBtn" style="padding: 0 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+        </div>
+        <div id="editor" style="padding: 10px; height: calc(100% - 60px);">
+            <textarea id="text" style="width: 100%; height: 100%; font-family: monospace; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+        </div>
+    `;
+
+    // Set initial value
     pipDoc.getElementById("filename").value = filename;
+
+    // 3. Define the Save Logic using the Main Window's context
+    pipDoc.getElementById("saveBtn").onclick = async () => {
+        const fname = pipDoc.getElementById("filename").value;
+        const content = pipDoc.getElementById("text").value;
+
+        if (!fname) {
+            PiP.alert("Filename is required!");
+            return;
+        }
+
+        // Call your existing createFile function in the main window
+        await createFile(fname, content);
+        
+        // Close the PiP window
+        PiP.close(); 
+    };
+
+    // 4. Define the Cancel Logic
+    pipDoc.getElementById("cancelBtn").onclick = () => {
+        PiP.close();
+    };
 }
