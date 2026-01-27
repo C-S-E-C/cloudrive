@@ -458,14 +458,44 @@ async function createFileWindow(filename = "") {
 
     // 2. Inject HTML (Remove the <script> tag from the string)
     pipDoc.body.innerHTML = `
-        <div id="top" style="display: flex; gap: 10px; padding: 10px; height: 40px; background: #eee;">
-            <input type="text" id="filename" style="flex: 1; border: 1px solid #ccc; border-radius: 4px;" placeholder="file.txt" />
-            <button id="saveBtn" style="padding: 0 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-            <button id="cancelBtn" style="padding: 0 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
-        </div>
-        <div id="editor" style="padding: 10px; height: calc(100% - 60px);">
-            <textarea id="text" style="width: 100%; height: 100%; font-family: monospace; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-        </div>
+    <div id="top" style="display: flex; gap: 10px; padding: 10px; height: 40px; background: #eee;">
+    <input type="text" id="filename" style="flex: 1; border: 1px solid #ccc; border-radius: 4px;" placeholder="file.txt" />
+    <button id="openBtn" style="padding: 0 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Open</button>
+    <button id="saveBtn" style="padding: 0 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+    <button id="cancelBtn" style="padding: 0 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+</div>
+<div id="editor" style="padding: 10px; height: calc(100% - 60px);">
+    <textarea id="text" style="width: 100%; height: 100%; font-family: monospace; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+</div>
+
+<script>
+// Add file input element for opening files
+const fileInput = document.createElement('input');
+fileInput.type = 'file';
+fileInput.id = 'fileInput';
+fileInput.style.display = 'none';
+document.body.appendChild(fileInput);
+
+// Add event listener to Open button
+document.getElementById('openBtn').addEventListener('click', () => {
+    fileInput.click();
+});
+
+// Handle file selection
+fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
+    if (files.length > 0) {
+        const file = files[0];
+        document.getElementById('filename').value = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('text').value = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+});
+</script>
     `;
 
     // Set initial value
@@ -494,24 +524,3 @@ async function createFileWindow(filename = "") {
     };
 
 }
-
-const fileInput = document.getElementById('fileInput');
-fileInput.addEventListener('change', () => {
-    const files = fileInput.files;
-    const formData = new FormData();
-    
-    // Loop through each selected file
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileName = file.name;  // Get filename
-        formData.append(`file${i}`, file);  // Add file to FormData
-        
-        // To read file content, use FileReader
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const fileContent = e.target.result;
-            createFile(fileName,fileContent);
-        };
-    }
-})
