@@ -370,7 +370,7 @@ async function loadFiles() {
     }
     res = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
     result = await res.json();
-    document.getElementById("MaxSizeDisplay").innerHTML = `&nbsp;/${result.data.max}Gb`
+    document.getElementById("MaxSizeDisplay").innerHTML = ` /${result.data.max}Gb`
     if (result.data.used >= 1024*1024*1024*1024) {
         //tb
         document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024*1024)).toFixed(2)}Tb`
@@ -383,7 +383,7 @@ async function loadFiles() {
     } else if (result.data.used >= 1024) {
         //Kb
         document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/1024).toFixed(2)}Kb`
-    } else if (result.data.used > 0) {
+    } else if (result.data.used >= 0) {
         //B
         document.getElementById("SizeDisplay").innerHTML = `${(result.data.used).toFixed(2)}B`
     }
