@@ -136,7 +136,11 @@ async function createFile(filename, content) {
     statusbar.innerText = "Data Uploading...";
     circle.style.borderBottomColor = "#078b07";
     circle.style.animation = "bigger 3s forwards";
+
     // Start request and animation delay in parallel
+    const animationDelay = new Promise(resolve => setTimeout(resolve, 1500));
+
+    await animationDelay;
     const fetchevent = fetch(`${API_BASE}/action/create`, { method: 'POST', body: params });
     // Update Server Circle animation
     servCircle.style.borderColor = "#078b07";
