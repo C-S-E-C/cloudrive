@@ -370,7 +370,7 @@ async function loadFiles() {
     }
     res = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
     result = await res.json();
-    document.getElementById("MaxSizeDisplay").innerHTML = `&nbsp;&nbsp;/${result.data.max}Gb`
+    document.getElementById("MaxSizeDisplay").innerHTML = `&nbsp;/${result.data.max}Gb`
     if (result.data.used >= 1024*1024*1024*1024) {
         //tb
         document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024*1024)).toFixed(2)}Tb`
