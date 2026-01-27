@@ -494,3 +494,24 @@ async function createFileWindow(filename = "") {
     };
 
 }
+
+const fileInput = document.getElementById('fileInput');
+fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
+    const formData = new FormData();
+    
+    // Loop through each selected file
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileName = file.name;  // Get filename
+        formData.append(`file${i}`, file);  // Add file to FormData
+        
+        // To read file content, use FileReader
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+            createFile(fileName,fileContent);
+        };
+    }
+})
