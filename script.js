@@ -467,40 +467,56 @@ async function createFileWindow(filename = "") {
 <div id="editor" style="padding: 10px; height: calc(100% - 60px);">
     <textarea id="text" style="width: 100%; height: 100%; font-family: monospace; border: 1px solid #ccc; border-radius: 4px;"></textarea>
 </div>
-
-<script>
-// Add file input element for opening files
-const fileInput = document.createElement('input');
-fileInput.type = 'file';
-fileInput.id = 'fileInput';
-fileInput.style.display = 'none';
-document.body.appendChild(fileInput);
-
-// Add event listener to Open button
-document.getElementById('openBtn').addEventListener('click', () => {
-    fileInput.click();
-});
-
-// Handle file selection
-fileInput.addEventListener('change', () => {
-    const files = fileInput.files;
-    if (files.length > 0) {
-        const file = files[0];
-        document.getElementById('filename').value = file.name;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('text').value = e.target.result;
-        };
-        reader.readAsText(file);
-    }
-});
-</script>
     `;
 
     // Set initial value
     pipDoc.getElementById("filename").value = filename;
+    // Separate JavaScript file for PiP window functionality
 
+// Create hidden file input for opening files
+const fileInput = document.createElement('input');
+fileInput.type = 'file';
+fileInput.accept = '.txt,.js,.html,.css,.json,.md,.py,.java,.c,.cpp';
+fileInput.style.display = 'none';
+document.body.appendChild(fileInput);
+
+// Get elements
+const openBtn = document.getElementById('openBtn');
+const filenameInput = document.getElementById('filename');
+const textarea = document.getElementById('text');
+
+// Open button click handler
+openBtn.addEventListener('click', () => {
+    fileInput.click();
+});
+
+// File input change handler
+fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
+    if (files.length > 0) {
+        const file = files[0];
+        
+        // Set filename in the input
+        filenameInput.value = file.name;
+        
+        // Read file content
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            textarea.value = e.target.result;
+        };
+        
+        reader.onerror = function() {
+            alert('Error reading file');
+        };
+        
+        // Try to read as text
+        reader.readAsText(file);
+    }
+    
+    // Clear the input so same file can be selected again
+    fileInput.value = '';
+});
     // 3. Define the Save Logic using the Main Window's context
     pipDoc.getElementById("saveBtn").onclick = async () => {
         const fname = pipDoc.getElementById("filename").value;
