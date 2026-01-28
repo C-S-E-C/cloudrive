@@ -452,91 +452,53 @@ function copyToClipboard(text) {
 }
 
 async function createFileWindow(filename = "") {
-    // 1. Await the window request
-    const PiP = await window.documentPictureInPicture.requestWindow({ width: 500, height: 300 });
+    const PiP = await window.documentPictureInPicture.requestWindow({ width: 500, height: 400 });
     const pipDoc = PiP.document;
 
-    // 2. Inject HTML (Remove the <script> tag from the string)
     pipDoc.body.innerHTML = `
     <div id="top" style="display: flex; gap: 10px; padding: 10px; height: 40px; background: #eee;">
-    <input type="text" id="filename" style="flex: 1; border: 1px solid #ccc; border-radius: 4px;" placeholder="file.txt" />
-    <button id="openBtn" style="padding: 0 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Open</button>
-    <button id="saveBtn" style="padding: 0 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-    <button id="cancelBtn" style="padding: 0 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
-</div>
-<div id="editor" style="padding: 10px; height: calc(100% - 60px);">
-    <textarea id="text" style="width: 100%; height: 100%; font-family: monospace; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-</div>
-    `;
+        <input type="text" id="filename" style="flex: 1; border: 1px solid #ccc; border-radius: 4px;" placeholder="file.txt" />
+        <button id="openBtn" style="padding: 0 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Open</button>
+        <button id="saveBtn" style="padding: 0 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+        <button id="cancelBtn" style="padding: 0 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+    </div>
+    <div id="editor" style="padding: 10px; height: calc(100% - 60px);">
+        <textarea id="text" style="width: 100%; height: 100%; font-family: monospace; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+    </div>`;
 
-    // Set initial value
     pipDoc.getElementById("filename").value = filename;
-    // Separate JavaScript file for PiP window functionality
 
-// Create hidden file input for opening files
-const fileInput = document.createElement('input');
-fileInput.type = 'file';
-fileInput.accept = '.txt,.js,.html,.css,.json,.md,.py,.java,.c,.cpp';
-fileInput.style.display = 'none';
-document.body.appendChild(fileInput);
+    // --- FIXED: Create hidden file input INSIDE the PiP Document ---
+    const fileInput = pipDoc.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.txt,.js,.html,.css,.json,.md,.py,.java,.c,.cpp';
+    fileInput.style.display = 'none';
+    pipDoc.body.appendChild(fileInput); // Attach to pipDoc, not document
 
-// Get elements
-const openBtn = document.getElementById('openBtn');
-const filenameInput = document.getElementById('filename');
-const textarea = document.getElementById('text');
+    const openBtn = pipDoc.getElementById('openBtn');
+    const filenameInput = pipDoc.getElementById('filename');
+    const textarea = pipDoc.getElementById('text');
 
-// Open button click handler
-openBtn.addEventListener('click', () => {
-    fileInput.click();
-});
+    openBtn.onclick = () => fileInput.click();
 
-// File input change handler
-fileInput.addEventListener('change', () => {
-    const files = fileInput.files;
-    if (files.length > 0) {
-        const file = files[0];
-        
-        // Set filename in the input
-        filenameInput.value = file.name;
-        
-        // Read file content
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            textarea.value = e.target.result;
-        };
-        
-        reader.onerror = function() {
-            alert('Error reading file');
-        };
-        
-        // Try to read as text
-        reader.readAsText(file);
-    }
-    
-    // Clear the input so same file can be selected again
-    fileInput.value = '';
-});
-    // 3. Define the Save Logic using the Main Window's context
-    pipDoc.getElementById("saveBtn").onclick = async () => {
-        const fname = pipDoc.getElementById("filename").value;
-        const content = pipDoc.getElementById("text").value;
-
-        if (!fname) {
-            PiP.alert("Filename is required!");
-            return;
+    fileInput.onchange = () => {
+        const file = fileInput.files[0];
+        if (file) {
+            filenameInput.value = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => { textarea.value = e.target.result; };
+            reader.readAsText(file);
         }
+        fileInput.value = '';
+    };
 
-        // Call your existing createFile function in the main window
+    pipDoc.getElementById("saveBtn").onclick = async () => {
+        const fname = filenameInput.value;
+        const content = textarea.value;
+        if (!fname) return alert("Filename is required!");
         await createFile(fname, content);
-        
-        // Close the PiP window
         PiP.close(); 
     };
 
-    // 4. Define the Cancel Logic
-    pipDoc.getElementById("cancelBtn").onclick = () => {
-        PiP.close();
-    };
-
+    pipDoc.getElementById("cancelBtn").onclick = () => PiP.close();
 }
