@@ -93,7 +93,7 @@ if (document.getElementById('loginForm')) {
 // --- Dashboard & Action Functions ---
 
 async function createFile(filename, content) {
-    const name = filename;
+    const name = currentPath+filename;
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
     
