@@ -548,3 +548,30 @@ async function createFileWindow(filename = "") {
 
     pipDoc.getElementById("cancelBtn").onclick = () => PiP.close();
 }
+
+function parentdir() {
+    // 如果已经在根目录，则无需返回
+    if (!currentPath || currentPath === "/") {
+        return;
+    }
+
+    // 移除末尾的斜杠（如果有），方便进行切割
+    if (currentPath.endsWith('/')) {
+        currentPath = currentPath.slice(0, -1);
+    }
+
+    // 找到最后一个斜杠的位置
+    const parts = currentPath.split('/');
+    parts.pop(); // 移除当前文件夹
+
+    // 重新拼接路径
+    let parentPath = parts.join('/');
+    
+    // 如果父路径不为空，确保它以斜杠结尾
+    if (parentPath && !parentPath.endsWith('/')) {
+        parentPath += '/';
+    }
+
+    // 跳转回 dashboard
+    window.location.href = `dashboard.html${parentPath ? '?path=' + encodeURIComponent(parentPath) : ''}`;
+}
