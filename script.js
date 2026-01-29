@@ -19,7 +19,7 @@ const file_icon = {
     "sh": "powershell",
 }
 // 获取 URL 中的 path 参数，并确保格式统一（以 / 结尾）
-const currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
+var currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
 document.getElementById("path").innerHTML = currentPath;
 // --- Your Custom Dual SHA-512 Hashing Logic ---
 async function sha512(str) {
