@@ -561,11 +561,11 @@ function parentdir() {
     }
 
     // 找到最后一个斜杠的位置
-    const parts = currentPath.split('/');
+    var parts = currentPath.split('/');
     parts.pop(); // 移除当前文件夹
 
     // 重新拼接路径
-    let parentPath = parts.join('/');
+    var parentPath = parts.join('/');
     
     // 如果父路径不为空，确保它以斜杠结尾
     if (parentPath && !parentPath.endsWith('/')) {
