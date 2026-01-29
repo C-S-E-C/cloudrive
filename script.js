@@ -1,5 +1,23 @@
 const API_BASE = 'https://api.cloudrive.csec.top';
-
+const file_icon = {
+    "jpg":"file-picture",
+    "jpeg":"file-picture",
+    "png":"file-picture",
+    "webp":"file-picture",
+    "mp3":"file-music",
+    "wav":"file-music",
+    "flac":"file-music",
+    "zip":"file-zip",
+    "rar":"file-zip",
+    "7z":"file-zip",
+    "tar":"file-zip",
+    "gz":"file-zip",
+    "mp4": "file-video",
+    "avi": "file-video",
+    "py": "python",
+    "pyc": "python",
+    "sh": "powershell",
+}
 // --- Your Custom Dual SHA-512 Hashing Logic ---
 async function sha512(str) {
     const encoder = new TextEncoder();
@@ -71,34 +89,6 @@ if (document.getElementById('loginForm')) {
 }
 
 // --- Dashboard & Action Functions ---
-async function loadFiles() {
-    const userid = localStorage.getItem('userid');
-    const password = localStorage.getItem('pass_hash');
-    if (!userid) return;
-
-    const params = new URLSearchParams({ userid, password, path: "" });
-    var res = await fetch(`${API_BASE}/action/list`, { method: 'POST', body: params });
-    var result = await res.json();
-
-    const container = document.getElementById('fileList');
-    if (result.success && result.data) {
-        container.innerHTML = result.data.map(file => {
-            const fileName = file.key.replace(userid + '/', '');
-            if (!fileName) return ''; // Skip the directory placeholder
-            return `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-4">${fileName}</td>
-                    <td class="p-4 text-right">
-                        <button onclick="deleteFile('${fileName}')" class="text-red-600 hover:underline">Delete</button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-    var res = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
-    var result = await res.json();
-    
-}
 
 async function createFile(filename, content) {
     const name = filename;
@@ -342,50 +332,106 @@ async function confirmShare() {
 async function loadFiles() {
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
+    // 获取 URL 中的 path 参数，并确保格式统一（以 / 结尾）
+    let currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
+    if (currentPath && !currentPath.endsWith('/')) currentPath += '/';
+    
     if (!userid) return;
 
-    const params = new URLSearchParams({ userid, password, path: "" });
-    var res = await fetch(`${API_BASE}/action/list`, { method: 'POST', body: params });
-    var result = await res.json();
+    const params = new URLSearchParams({ userid, password, path: currentPath });
 
-    const container = document.getElementById('fileList');
-    if (result.success && result.data) {
-        container.innerHTML = result.data.map(file => {
-            const fileName = file.key.replace(userid + '/', '');
-            if (!fileName || fileName === "") return ''; 
-            
-            return `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-4 w-10">
-                        <input type="checkbox" class="file-checkbox" value="${fileName}">
-                    </td>
-                    <td class="p-4 font-medium">${fileName}</td>
-                    <td class="p-4 text-right">
-                        <button onclick="deleteFile('${fileName}')" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+    try {
+        // --- 第一部分：渲染文件列表 ---
+        const resList = await fetch(`${API_BASE}/action/list`, { method: 'POST', body: params });
+        const result = await resList.json();
+        const container = document.getElementById('fileList');
+
+        if (result.success && result.data) {
+            const renderedFolders = new Set(); // 用于文件夹去重
+
+            container.innerHTML = result.data.map(file => {
+                // 计算相对于当前目录的路径名
+                let relativePath = file.key.replace(userid + '/' + currentPath, '');
+                if (!relativePath || relativePath === "") return '';
+
+                let icon = "file-empty";
+                let fileName = relativePath;
+                let isFolder = false;
+
+                // 文件夹识别逻辑
+                if (relativePath.includes("/")) {
+                    isFolder = true;
+                    fileName = relativePath.split("/")[0]; // 只取第一级目录名
+                    if (renderedFolders.has(fileName)) return ''; 
+                    renderedFolders.add(fileName);
+                    icon = "folder";
+                } else {
+                    // 文件图标识别
+                    const ext = fileName.split('.').pop().toLowerCase();
+                    if (typeof file_icon !== 'undefined' && file_icon[ext]) {
+                        icon = file_icon[ext];
+                    }
+                }
+
+                // 生成跳转链接
+                const fullPath = currentPath + fileName;
+                const encodedPath = encodeURIComponent(fullPath);
+                const targetUrl = isFolder 
+                    ? `dashboard.html?path=${encodedPath}/` 
+                    : `view.html?path=${encodedPath}`;
+
+                return `
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="p-4 w-10">
+                            <input type="checkbox" class="file-checkbox" value="${file.key}">
+                        </td>
+                        <td class="p-4 font-medium flex items-center gap-3">
+                            <span class="csecicon-${icon} text-xl text-gray-500"></span>
+                            <a href="${targetUrl}" class="text-blue-600 hover:text-blue-800 hover:underline">
+                                ${fileName}
+                            </a>
+                        </td>
+                        <td class="p-4 text-right">
+                            <button onclick="deleteFile('${file.key}')" 
+                                    class="text-red-500 hover:bg-red-50 px-2 py-1 rounded transition text-sm font-semibold">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // --- 第二部分：渲染容量信息 ---
+        const resSize = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
+        const sizeResult = await resSize.json();
+        
+        if (sizeResult.success) {
+            document.getElementById("MaxSizeDisplay").innerHTML = ` / ${sizeResult.data.max}Gb`;
+            if (localStorage.getItem("style.decimals")) {
+                document.getElementById("SizeDisplay").innerHTML = formatBytes(sizeResult.data.used,localStorage.getItem("style.decimals"));
+            }
+            document.getElementById("SizeDisplay").innerHTML = formatBytes(sizeResult.data.used);
+        }
+
+    } catch (error) {
+        console.error("LoadFiles Error:", error);
     }
-    res = await fetch(`${API_BASE}/size`, { method: 'POST', body: params });
-    result = await res.json();
-    document.getElementById("MaxSizeDisplay").innerHTML = ` /${result.data.max}Gb`
-    if (result.data.used >= 1024*1024*1024*1024) {
-        //tb
-        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024*1024)).toFixed(2)}Tb`
-    } else if (result.data.used >= 1024*1024*1024) {
-        //gb
-        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024*1024)).toFixed(2)}Gb`
-    } else if (result.data.used >= 1024*1024) {
-        //mb
-        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/(1024*1024)).toFixed(2)}Mb`
-    } else if (result.data.used >= 1024) {
-        //Kb
-        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used/1024).toFixed(2)}Kb`
-    } else if (result.data.used >= 0) {
-        //B
-        document.getElementById("SizeDisplay").innerHTML = `${(result.data.used).toFixed(2)}B`
-    }
+}
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 B';
+    if (bytes < 0) return 'Invalid Size';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
+
+    // 计算单位索引
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    // 使用 parseFloat 确保 1024.00 这种显示为 1024
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 // Add this to your script.js if not already present
