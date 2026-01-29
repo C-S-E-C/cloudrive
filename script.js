@@ -18,6 +18,8 @@ const file_icon = {
     "pyc": "python",
     "sh": "powershell",
 }
+// 获取 URL 中的 path 参数，并确保格式统一（以 / 结尾）
+let currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
 // --- Your Custom Dual SHA-512 Hashing Logic ---
 async function sha512(str) {
     const encoder = new TextEncoder();
@@ -91,7 +93,7 @@ if (document.getElementById('loginForm')) {
 // --- Dashboard & Action Functions ---
 
 async function createFile(filename, content) {
-    const name = filename;
+    const name = currentPath + filename;
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
     
@@ -332,8 +334,6 @@ async function confirmShare() {
 async function loadFiles() {
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
-    // 获取 URL 中的 path 参数，并确保格式统一（以 / 结尾）
-    let currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
     if (currentPath && !currentPath.endsWith('/')) currentPath += '/';
     
     if (!userid) return;
