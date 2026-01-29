@@ -19,7 +19,7 @@ const file_icon = {
     "sh": "powershell",
 }
 // 获取 URL 中的 path 参数，并确保格式统一（以 / 结尾）
-let currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
+const currentPath = (new URLSearchParams(document.location.search)).get("path") || "";
 // --- Your Custom Dual SHA-512 Hashing Logic ---
 async function sha512(str) {
     const encoder = new TextEncoder();
@@ -186,8 +186,7 @@ async function createFile(filename, content) {
 async function deleteFile(fileName) {
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
-    
-    const params = new URLSearchParams({ userid, password, path: fileName });
+    const params = new URLSearchParams({ userid, password, path: currentPath+fileName });
     const res = await fetch(`${API_BASE}/action/delete`, { method: 'POST', body: params });
     const data = await res.json();
     if (data.success) loadFiles();
