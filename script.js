@@ -93,7 +93,7 @@ if (document.getElementById('loginForm')) {
 // --- Dashboard & Action Functions ---
 
 async function createFile(filename, content) {
-    const name = currentPath + filename;
+    const name = filename;
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
     
@@ -186,7 +186,7 @@ async function createFile(filename, content) {
 async function deleteFile(fileName) {
     const userid = localStorage.getItem('userid');
     const password = localStorage.getItem('pass_hash');
-    const params = new URLSearchParams({ userid, password, path: currentPath+fileName });
+    const params = new URLSearchParams({ userid, password, path: fileName });
     const res = await fetch(`${API_BASE}/action/delete`, { method: 'POST', body: params });
     const data = await res.json();
     if (data.success) loadFiles();
@@ -351,6 +351,7 @@ async function loadFiles() {
             container.innerHTML = result.data.map(file => {
                 // 计算相对于当前目录的路径名
                 let relativePath = file.key.replace(userid + '/' + currentPath, '');
+                let Path = file.key.replace(userid + '/', '');
                 if (!relativePath || relativePath === "") return '';
 
                 let icon = "file-empty";
@@ -382,7 +383,7 @@ async function loadFiles() {
                 return `
                     <tr class="border-b hover:bg-gray-50 transition">
                         <td class="p-4 w-10">
-                            <input type="checkbox" class="file-checkbox" value="${file.key}">
+                            <input type="checkbox" class="file-checkbox" value="${Path}">
                         </td>
                         <td class="p-4 font-medium flex items-center gap-3">
                             <span class="csecicon-${icon} text-xl text-gray-500"></span>
@@ -391,7 +392,7 @@ async function loadFiles() {
                             </a>
                         </td>
                         <td class="p-4 text-right">
-                            <button onclick="deleteFile('${file.key}')" 
+                            <button onclick="deleteFile('${Path}')" 
                                     class="text-red-500 hover:bg-red-50 px-2 py-1 rounded transition text-sm font-semibold">
                                 Delete
                             </button>
